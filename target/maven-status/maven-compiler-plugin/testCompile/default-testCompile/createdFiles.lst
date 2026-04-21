@@ -1,0 +1,5 @@
+com\example\library\controller\MembreControllerTest.class
+com\example\library\controller\ReservationControllerTest.class
+com\example\library\IntegrationTest.class
+com\example\library\controller\LivreControllerTest.class
+com\example\library\controller\TransactionEmpruntControllerTest.class

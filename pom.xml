@@ -42,7 +42,7 @@
     <dependency>
       <groupId>org.projectlombok</groupId>
       <artifactId>lombok</artifactId>
-      <version>1.18.28</version>
+      <version>1.18.30</version>
       <scope>provided</scope>
     </dependency>
     <dependency>
@@ -61,13 +61,9 @@
         <configuration>
           <source>${java.version}</source>
           <target>${java.version}</target>
-          <annotationProcessorPaths>
-            <path>
-              <groupId>org.projectlombok</groupId>
-              <artifactId>lombok</artifactId>
-              <version>1.18.28</version>
-            </path>
-          </annotationProcessorPaths>
+          <release>${java.version}</release>
+          <fork>true</fork>
+          <executable>${env.JAVA_HOME}/bin/javac</executable>
         </configuration>
       </plugin>
     </plugins>

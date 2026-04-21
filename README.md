@@ -21,10 +21,3 @@ Lancer l'application en utilisant Oracle configuré :
 ```bash
 mvn spring-boot:run
 ```
-
-Remarques:
-- Le projet contient encore la configuration H2 (commentée) si vous souhaitez un démarrage rapide en mémoire pour tests locaux.
-- Hibernate est configuré pour `Oracle12cDialect`.
-
-Accès H2-console (si vous activez H2 pour le développement): http://localhost:8080/h2-console (JDBC URL: `jdbc:h2:mem:librarydb`)
-# TP_BD2
