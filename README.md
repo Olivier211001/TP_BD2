@@ -4,8 +4,7 @@ Prérequis:
 - Java 17
 - Maven
 
-Lancer l'application en utilisant Oracle configuré :
-
 ```bash
-mvn spring-boot:run
+# Lancer l'app 
+mvn -Pconsole spring-boot:run
 ```
