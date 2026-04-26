@@ -37,13 +37,8 @@
          ojdbc11 for modern JDKs. -->
     <dependency>
       <groupId>com.oracle.database.jdbc</groupId>
-<<<<<<< Updated upstream
       <artifactId>ojdbc11</artifactId>
       <version>${oracle.jdbc.version}</version>
-=======
-      <artifactId>ojdbc8</artifactId>
-      <version>21.9.0.0</version>
->>>>>>> Stashed changes
       <scope>runtime</scope>
     </dependency>
     <dependency>
