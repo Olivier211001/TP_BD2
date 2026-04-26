@@ -5,17 +5,26 @@ import lombok.Getter;
 import lombok.Setter;
 
 @Entity
-@Table(name = "editeur")
+@Table(name = "EDITEUR")
 @Getter
 @Setter
 public class Editeur {
+
     @Id
+    @Column(name = "ID_EDIT")  // ← vraie PK dans Oracle
     @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "editeur_seq")
-    @SequenceGenerator(name = "editeur_seq", sequenceName = "editeur_seq", allocationSize = 1)
+    @SequenceGenerator(name = "editeur_seq", sequenceName = "SEQ_EDITEUR", allocationSize = 1)
     private Long id;
 
+    @Column(name = "NOM", nullable = false, length = 100)
     private String nom;
+
+    @Column(name = "ADRESSE", length = 200)
     private String adresse;
+
+    @Column(name = "COURRIEL", length = 100)
     private String courriel;
+
+    @Column(name = "NUM_TEL", length = 20)
     private String numTel;
 }

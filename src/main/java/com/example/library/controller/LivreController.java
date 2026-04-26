@@ -32,12 +32,20 @@ public class LivreController {
 
     @PostMapping
     public ResponseEntity<Livre> create(@RequestBody Livre livre) {
+        // Vérification que les FK obligatoires sont présentes
+        if (livre.getEditeur() == null || livre.getCategorie() == null) {
+            return ResponseEntity.badRequest().build();
+        }
         Livre saved = service.save(livre);
-        return ResponseEntity.created(URI.create("/api/livres/" + saved.getIsbn())).body(saved);
+        return ResponseEntity
+                .created(URI.create("/api/livres/" + saved.getIsbn()))
+                .body(saved);
     }
 
     @PutMapping("/{isbn}")
-    public ResponseEntity<Livre> update(@PathVariable String isbn, @RequestBody Livre livre) {
+    public ResponseEntity<Livre> update(
+            @PathVariable String isbn,
+            @RequestBody Livre livre) {
         if (!service.findByIsbn(isbn).isPresent()) {
             return ResponseEntity.notFound().build();
         }
@@ -47,6 +55,9 @@ public class LivreController {
 
     @DeleteMapping("/{isbn}")
     public ResponseEntity<Void> delete(@PathVariable String isbn) {
+        if (!service.findByIsbn(isbn).isPresent()) {
+            return ResponseEntity.notFound().build();
+        }
         service.deleteByIsbn(isbn);
         return ResponseEntity.noContent().build();
     }

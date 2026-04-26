@@ -1,5 +1,7 @@
 package com.example.library;
 
+import com.example.library.model.Categorie;
+import com.example.library.model.Editeur;
 import com.example.library.model.Livre;
 import com.example.library.model.Membre;
 import com.example.library.service.LivreService;
@@ -86,24 +88,71 @@ public class ConsoleApp implements CommandLineRunner {
     }
 
     private void createLivre(Scanner sc) {
-        System.out.print("Nouvel ISBN: ");
+        System.out.println("\n--- Ajouter un nouveau livre ---");
+
+        System.out.print("ISBN : ");
         String isbn = sc.nextLine().trim();
-        System.out.print("Titre: ");
+
+        // Vérifier que l'ISBN n'existe pas déjà
+        if (livreService.findByIsbn(isbn).isPresent()) {
+            System.out.println("❌ Un livre avec cet ISBN existe déjà.");
+            return;
+        }
+
+        System.out.print("Titre : ");
         String titre = sc.nextLine().trim();
-        System.out.print("Année (nombre): ");
-        String anneeStr = sc.nextLine().trim();
+
+        System.out.print("Année : ");
         Integer annee = null;
         try {
-            if (!anneeStr.isEmpty())
-                annee = Integer.parseInt(anneeStr);
-        } catch (NumberFormatException ignored) {
+            annee = Integer.parseInt(sc.nextLine().trim());
+        } catch (NumberFormatException e) {
+            System.out.println("❌ Année invalide.");
+            return;
         }
+
+        // ID éditeur — obligatoire car ID_EDIT est NOT NULL dans Oracle
+        System.out.print("ID éditeur : ");
+        Long idEditeur = null;
+        try {
+            idEditeur = Long.parseLong(sc.nextLine().trim());
+        } catch (NumberFormatException e) {
+            System.out.println("❌ ID éditeur invalide.");
+            return;
+        }
+
+        // ID catégorie — obligatoire car ID_CAT est NOT NULL dans Oracle
+        System.out.print("ID catégorie : ");
+        Long idCategorie = null;
+        try {
+            idCategorie = Long.parseLong(sc.nextLine().trim());
+        } catch (NumberFormatException e) {
+            System.out.println("❌ ID catégorie invalide.");
+            return;
+        }
+
+        // On crée les objets avec seulement l'ID
+        // JPA utilise la référence (FK) sans charger l'entité complète
+        Editeur editeur = new Editeur();
+        editeur.setId(idEditeur);
+
+        Categorie categorie = new Categorie();
+        categorie.setId(idCategorie);
+
         Livre l = new Livre();
         l.setIsbn(isbn);
         l.setTitre(titre);
         l.setAnnee(annee);
-        Livre saved = livreService.save(l);
-        System.out.println("Livre ajouté: " + saved.getIsbn());
+        l.setEditeur(editeur);
+        l.setCategorie(categorie);
+
+        try {
+            Livre saved = livreService.save(l);
+            System.out.printf("✅ Livre ajouté : ISBN=%s | %s (%d)%n",
+                    saved.getIsbn(), saved.getTitre(), saved.getAnnee());
+        } catch (Exception e) {
+            System.out.println("❌ Erreur lors de l'ajout : " + e.getMessage());
+        }
     }
 
     private void listMembres() {
