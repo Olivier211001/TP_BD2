@@ -12,7 +12,8 @@ import java.time.LocalDate;
 @Setter
 public class TransactionEmprunt {
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "transaction_emprunt_seq")
+    @SequenceGenerator(name = "transaction_emprunt_seq", sequenceName = "transaction_emprunt_seq", allocationSize = 1)
     private Long id;
 
     @ManyToOne

@@ -12,7 +12,8 @@ import java.time.LocalDate;
 @Setter
 public class Exemplaire {
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "exemplaire_seq")
+    @SequenceGenerator(name = "exemplaire_seq", sequenceName = "exemplaire_seq", allocationSize = 1)
     private Long id;
 
     @ManyToOne

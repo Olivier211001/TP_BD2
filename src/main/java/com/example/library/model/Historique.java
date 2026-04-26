@@ -12,7 +12,8 @@ import java.math.BigDecimal;
 @Setter
 public class Historique {
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "historique_seq")
+    @SequenceGenerator(name = "historique_seq", sequenceName = "historique_seq", allocationSize = 1)
     private Long id;
 
     @ManyToOne

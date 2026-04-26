@@ -12,7 +12,8 @@ import java.time.LocalDateTime;
 @Setter
 public class LogEntry {
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "log_entry_seq")
+    @SequenceGenerator(name = "log_entry_seq", sequenceName = "log_entry_seq", allocationSize = 1)
     private Long id;
 
     private String typeOperation;
