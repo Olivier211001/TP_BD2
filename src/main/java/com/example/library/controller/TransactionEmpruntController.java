@@ -25,27 +25,75 @@ public class TransactionEmpruntController {
 
     @GetMapping("/{id}")
     public ResponseEntity<TransactionEmprunt> get(@PathVariable Long id) {
-        return service.findById(id).map(ResponseEntity::ok).orElse(ResponseEntity.notFound().build());
+        return service.findById(id)
+                .map(ResponseEntity::ok)
+                .orElse(ResponseEntity.notFound().build());
     }
 
     @PostMapping
-    public ResponseEntity<TransactionEmprunt> create(@RequestBody TransactionEmprunt transaction) {
+    public ResponseEntity<TransactionEmprunt> create(
+            @RequestBody TransactionEmprunt transaction) {
+
+        if (transaction.getEmploye() == null
+                || transaction.getMembre() == null
+                || transaction.getExemplaire() == null
+                || transaction.getDateDebut() == null
+                || transaction.getDateRetourPrevu() == null) {
+
+            return ResponseEntity.badRequest().build();
+        }
+
+        if (transaction.getEtat() == null) {
+            transaction.setEtat(
+                TransactionEmprunt.EtatTransaction.EN_COURS
+            );
+        }
+
         TransactionEmprunt saved = service.save(transaction);
-        return ResponseEntity.created(URI.create("/api/transactions/" + saved.getId())).body(saved);
+
+        return ResponseEntity
+                .created(URI.create("/api/transactions/" + saved.getId()))
+                .body(saved);
     }
 
     @PutMapping("/{id}")
-    public ResponseEntity<TransactionEmprunt> update(@PathVariable Long id,
+    public ResponseEntity<TransactionEmprunt> update(
+            @PathVariable Long id,
             @RequestBody TransactionEmprunt transaction) {
-        if (!service.findById(id).isPresent())
+
+        if (!service.findById(id).isPresent()) {
             return ResponseEntity.notFound().build();
+        }
+
+        if (transaction.getEmploye() == null
+                || transaction.getMembre() == null
+                || transaction.getExemplaire() == null
+                || transaction.getDateDebut() == null
+                || transaction.getDateRetourPrevu() == null) {
+
+            return ResponseEntity.badRequest().build();
+        }
+
+        if (transaction.getEtat() == null) {
+            transaction.setEtat(
+                TransactionEmprunt.EtatTransaction.EN_COURS
+            );
+        }
+
         transaction.setId(id);
+
         return ResponseEntity.ok(service.save(transaction));
     }
 
     @DeleteMapping("/{id}")
     public ResponseEntity<Void> delete(@PathVariable Long id) {
+
+        if (!service.findById(id).isPresent()) {
+            return ResponseEntity.notFound().build();
+        }
+
         service.deleteById(id);
+
         return ResponseEntity.noContent().build();
     }
 }

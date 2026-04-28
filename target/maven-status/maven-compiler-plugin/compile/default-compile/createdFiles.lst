@@ -21,11 +21,13 @@ com\example\library\controller\MembreController.class
 com\example\library\model\Employe.class
 com\example\library\service\MembreService.class
 com\example\library\repository\MembreRepository.class
+com\example\library\service\impl\LivreServiceImpl.class
 com\example\library\model\Livre.class
 com\example\library\model\TransactionEmprunt.class
 com\example\library\service\ReservationService.class
 com\example\library\model\Reservation.class
 com\example\library\repository\ReservationRepository.class
+com\example\library\ConsoleApp.class
 com\example\library\repository\PaymentRepository.class
 com\example\library\service\impl\ReservationServiceImpl.class
 com\example\library\service\TransactionEmpruntService.class

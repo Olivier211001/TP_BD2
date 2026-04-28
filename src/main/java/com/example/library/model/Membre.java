@@ -9,9 +9,14 @@ import lombok.Setter;
 @Getter
 @Setter
 public class Membre {
+
     @Id
     @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "membre_seq")
-    @SequenceGenerator(name = "membre_seq", sequenceName = "membre_seq", allocationSize = 1)
+    @SequenceGenerator(
+            name = "membre_seq",
+            sequenceName = "membre_seq",
+            allocationSize = 1
+    )
     private Long id;
 
     private String nom;
@@ -25,6 +30,8 @@ public class Membre {
     private String password;
 
     public enum StatutCompte {
-        ACTIF, SUSPENDU, EXPIRE
+        Actif,
+        Suspendu,
+        Expiré
     }
 }
