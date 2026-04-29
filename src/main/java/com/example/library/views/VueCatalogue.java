@@ -15,17 +15,13 @@ public class VueCatalogue {
     @Column(name = "TITRE")
     private String titre;
 
-    @Column(name = "AUTEUR")
-    private String auteur;
-
-    @Column(name = "EDITEUR")
-    private String editeur;
-
-    @Column(name = "CATEGORIE")
-    private String categorie;
-
     @Column(name = "NB_DISPONIBLES")
     private Integer nbDisponibles;
 
-    // getters/setters
+    @Override
+    public String toString() {
+        return "ISBN: " + isbn +
+                " | Titre: " + titre +
+                " | Disponibles: " + nbDisponibles;
+    }
 }
