@@ -15,6 +15,24 @@ public class VueCatalogue {
     @Column(name = "TITRE")
     private String titre;
 
+    @Column(name = "ANNEE")
+    private Integer annee;
+
+    @Column(name = "AUTEUR_NOM")
+    private String auteurNom;
+
+    @Column(name = "AUTEUR_PRENOM")
+    private String auteurPrenom;
+
+    @Column(name = "EDITEUR")
+    private String editeur;
+
+    @Column(name = "CATEGORIE")
+    private String categorie;
+
+    @Column(name = "NB_EXEMPLAIRES")
+    private Integer nbExemplaires;
+
     @Column(name = "NB_DISPONIBLES")
     private Integer nbDisponibles;
 
@@ -22,6 +40,11 @@ public class VueCatalogue {
     public String toString() {
         return "ISBN: " + isbn +
                 " | Titre: " + titre +
+                " | Année: " + annee +
+                " | Auteur: " + auteurPrenom + " " + auteurNom +
+                " | Éditeur: " + editeur +
+                " | Catégorie: " + categorie +
+                " | Exemplaires: " + nbExemplaires +
                 " | Disponibles: " + nbDisponibles;
     }
 }

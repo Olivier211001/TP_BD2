@@ -29,6 +29,7 @@ public class ConsoleApp implements CommandLineRunner {
     private final VuePenalitesRepository vuePenalitesRepository;
     private final VueLogAdminRepository vueLogAdminRepository;
     private final VueEmployesRepository vueEmployesRepository;
+    private final ExemplaireRepository exemplaireRepository;
 
     public ConsoleApp(
             LivreService livreService,
@@ -44,7 +45,8 @@ public class ConsoleApp implements CommandLineRunner {
             VueLogAdminRepository vueLogAdminRepository,
             VueEmployesRepository vueEmployesRepository,
             EditeurRepository editeurRepository,
-            CategorieRepository categorieRepository) {
+            CategorieRepository categorieRepository,
+            ExemplaireRepository exemplaireRepository) {
         this.livreService = livreService;
         this.membreService = membreService;
         this.reservationService = reservationService;
@@ -59,43 +61,87 @@ public class ConsoleApp implements CommandLineRunner {
         this.vueEmployesRepository = vueEmployesRepository;
         this.editeurRepository = editeurRepository;
         this.categorieRepository = categorieRepository;
+        this.exemplaireRepository = exemplaireRepository;
     }
 
     @Override
     public void run(String... args) {
-        seedData(); // initilisation de données de test au besoin
+        // seedData(); // initilisation de données de test au besoin
         menuPrincipal();
     }
 
     private void seedData() {
 
-        if (editeurRepository.count() == 0) {
+        System.out.println("\n--- Initialisation des données démo ---");
 
-            Editeur e1 = new Editeur();
-            e1.setId(1L);
-            e1.setNom("Pearson");
-            e1.setAdresse("Montreal");
-            e1.setCourriel("pearson@test.com");
-            e1.setNumTel("5141111111");
+        try {
+            Categorie cat;
 
-            editeurRepository.save(e1);
+            if (categorieRepository.count() == 0) {
+                cat = new Categorie();
+                cat.setId(1L);
+                cat.setNom("Informatique");
+                cat.setDescription("Livres techniques");
+                categorieRepository.save(cat);
+            } else {
+                cat = categorieRepository.findAll().get(0);
+            }
+
+            Editeur ed;
+
+            if (editeurRepository.count() == 0) {
+                ed = new Editeur();
+                ed.setId(1L);
+                ed.setNom("Pearson");
+                ed.setAdresse("Montreal");
+                ed.setCourriel("pearson@test.com");
+                ed.setNumTel("5141111111");
+                editeurRepository.save(ed);
+            } else {
+                ed = editeurRepository.findAll().get(0);
+            }
+
+            if (livreService.findByIsbn("9780134685991").isEmpty()) {
+                Livre livre = new Livre();
+                livre.setIsbn("9780134685991");
+                livre.setTitre("Effective Java");
+                livre.setAnnee(2018);
+                livre.setCategorie(cat);
+                livre.setEditeur(ed);
+
+                livreService.save(livre);
+            }
+
+            if (exemplaireRepository.count() == 0) {
+                Exemplaire ex = new Exemplaire();
+                ex.setId(1L);
+                // ex.setEtat("Disponible");
+                ex.setLivre(livreService.findByIsbn("9780134685991").get());
+
+                exemplaireRepository.save(ex);
+            }
+
+            if (membreService.findAll().isEmpty()) {
+                Membre membre = new Membre();
+                membre.setNom("Lafleur");
+                membre.setPrenom("Olivier");
+                membre.setPassword("test123");
+                membre.setStatutCompte(Membre.StatutCompte.Actif);
+
+                membreService.save(membre);
+            }
+
+            System.out.println("Seed créé avec succès.");
+
+        } catch (Exception e) {
+            System.out.println("Erreur seed : " + e.getMessage());
         }
-
-        if (categorieRepository.count() == 0) {
-
-            Categorie c1 = new Categorie();
-            c1.setId(1L);
-            c1.setNom("Informatique");
-            c1.setDescription("Programmation");
-
-            categorieRepository.save(c1);
-        }
-
-        System.out.println("Seed initial créé.");
     }
 
     private void menuPrincipal() {
+
         while (true) {
+
             System.out.println("\n===== MENU PRINCIPAL =====");
             System.out.println("1. Membre");
             System.out.println("2. Employé");
@@ -106,14 +152,25 @@ public class ConsoleApp implements CommandLineRunner {
             int choix = lireInt();
 
             switch (choix) {
-                case 1 -> menuMembre();
-                case 2 -> menuEmploye();
-                case 3 -> menuAdmin();
-                case 0 -> {
+
+                case 1:
+                    menuMembre();
+                    break;
+
+                case 2:
+                    menuEmploye();
+                    break;
+
+                case 3:
+                    menuAdmin();
+                    break;
+
+                case 0:
                     System.out.println("Fin de l'application.");
                     return;
-                }
-                default -> System.out.println("Choix invalide.");
+
+                default:
+                    System.out.println("Choix invalide.");
             }
         }
     }
