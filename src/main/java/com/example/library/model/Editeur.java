@@ -11,7 +11,7 @@ import lombok.Setter;
 public class Editeur {
 
     @Id
-    @Column(name = "ID_EDIT")  // ← vraie PK dans Oracle
+    @Column(name = "ID_EDIT")
     @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "editeur_seq")
     @SequenceGenerator(name = "editeur_seq", sequenceName = "SEQ_EDITEUR", allocationSize = 1)
     private Long id;

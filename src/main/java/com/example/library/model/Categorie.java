@@ -11,7 +11,7 @@ import lombok.Setter;
 public class Categorie {
 
     @Id
-    @Column(name = "ID_CAT")  // ← vraie PK dans Oracle
+    @Column(name = "ID_CAT")
     @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "categorie_seq")
     @SequenceGenerator(name = "categorie_seq", sequenceName = "SEQ_CATEGORIE", allocationSize = 1)
     private Long id;

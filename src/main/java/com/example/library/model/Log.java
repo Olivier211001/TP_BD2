@@ -10,7 +10,7 @@ import java.time.LocalDateTime;
 @Table(name = "log_entry")
 @Getter
 @Setter
-public class LogEntry {
+public class Log {
     @Id
     @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "log_entry_seq")
     @SequenceGenerator(name = "log_entry_seq", sequenceName = "log_entry_seq", allocationSize = 1)

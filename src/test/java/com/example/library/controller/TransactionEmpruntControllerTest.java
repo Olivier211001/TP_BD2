@@ -1,7 +1,7 @@
 package com.example.library.controller;
 
-import com.example.library.model.TransactionEmprunt;
-import com.example.library.service.TransactionEmpruntService;
+import com.example.library.model.Transaction;
+import com.example.library.service.TransactionService;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
@@ -22,11 +22,11 @@ public class TransactionEmpruntControllerTest {
     private MockMvc mockMvc;
 
     @MockBean
-    private TransactionEmpruntService transactionService;
+    private TransactionService transactionService;
 
     @Test
     void getAllTransactions_returnsList() throws Exception {
-        TransactionEmprunt t = new TransactionEmprunt();
+        Transaction t = new Transaction();
         t.setId(1L);
 
         when(transactionService.findAll()).thenReturn(List.of(t));

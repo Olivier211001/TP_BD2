@@ -17,7 +17,7 @@ public class ConsoleApp implements CommandLineRunner {
     private final LivreService livreService;
     private final MembreService membreService;
     private final ReservationService reservationService;
-    private final TransactionEmpruntService transactionService;
+    private final TransactionService transactionService;
 
     private final VueCatalogueRepository vueCatalogueRepository;
     private final VueHistoriqueMembreRepository vueHistoriqueMembreRepository;
@@ -35,7 +35,7 @@ public class ConsoleApp implements CommandLineRunner {
             LivreService livreService,
             MembreService membreService,
             ReservationService reservationService,
-            TransactionEmpruntService transactionService,
+            TransactionService transactionService,
             VueCatalogueRepository vueCatalogueRepository,
             VueHistoriqueMembreRepository vueHistoriqueMembreRepository,
             VueEmpruntsEnCoursRepository vueEmpruntsEnCoursRepository,
@@ -374,7 +374,7 @@ public class ConsoleApp implements CommandLineRunner {
         Long id = lireLong();
 
         transactionService.findById(id).ifPresentOrElse(transaction -> {
-            transaction.setEtat(TransactionEmprunt.EtatTransaction.TERMINE);
+            transaction.setEtat(Transaction.EtatTransaction.Terminé);
             transaction.setDateRetourEffective(LocalDate.now());
             transactionService.save(transaction);
             System.out.println("Retour validé.");

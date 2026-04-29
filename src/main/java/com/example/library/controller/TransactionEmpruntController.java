@@ -1,7 +1,7 @@
 package com.example.library.controller;
 
-import com.example.library.model.TransactionEmprunt;
-import com.example.library.service.TransactionEmpruntService;
+import com.example.library.model.Transaction;
+import com.example.library.service.TransactionService;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -12,27 +12,27 @@ import java.util.List;
 @RequestMapping("/api/transactions")
 public class TransactionEmpruntController {
 
-    private final TransactionEmpruntService service;
+    private final TransactionService service;
 
-    public TransactionEmpruntController(TransactionEmpruntService service) {
+    public TransactionEmpruntController(TransactionService service) {
         this.service = service;
     }
 
     @GetMapping
-    public List<TransactionEmprunt> all() {
+    public List<Transaction> all() {
         return service.findAll();
     }
 
     @GetMapping("/{id}")
-    public ResponseEntity<TransactionEmprunt> get(@PathVariable Long id) {
+    public ResponseEntity<Transaction> get(@PathVariable Long id) {
         return service.findById(id)
                 .map(ResponseEntity::ok)
                 .orElse(ResponseEntity.notFound().build());
     }
 
     @PostMapping
-    public ResponseEntity<TransactionEmprunt> create(
-            @RequestBody TransactionEmprunt transaction) {
+    public ResponseEntity<Transaction> create(
+            @RequestBody Transaction transaction) {
 
         if (transaction.getEmploye() == null
                 || transaction.getMembre() == null
@@ -45,11 +45,10 @@ public class TransactionEmpruntController {
 
         if (transaction.getEtat() == null) {
             transaction.setEtat(
-                TransactionEmprunt.EtatTransaction.EN_COURS
-            );
+                    Transaction.EtatTransaction.EN_COURS);
         }
 
-        TransactionEmprunt saved = service.save(transaction);
+        Transaction saved = service.save(transaction);
 
         return ResponseEntity
                 .created(URI.create("/api/transactions/" + saved.getId()))
@@ -57,9 +56,9 @@ public class TransactionEmpruntController {
     }
 
     @PutMapping("/{id}")
-    public ResponseEntity<TransactionEmprunt> update(
+    public ResponseEntity<Transaction> update(
             @PathVariable Long id,
-            @RequestBody TransactionEmprunt transaction) {
+            @RequestBody Transaction transaction) {
 
         if (!service.findById(id).isPresent()) {
             return ResponseEntity.notFound().build();
@@ -76,8 +75,7 @@ public class TransactionEmpruntController {
 
         if (transaction.getEtat() == null) {
             transaction.setEtat(
-                TransactionEmprunt.EtatTransaction.EN_COURS
-            );
+                    Transaction.EtatTransaction.EN_COURS);
         }
 
         transaction.setId(id);
