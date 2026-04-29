@@ -1,13 +1,15 @@
 package com.example.library;
 
-import com.example.library.repository.*;
 import com.example.library.model.*;
+import com.example.library.repository.*;
 import com.example.library.service.*;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.stereotype.Component;
 
 import java.time.LocalDate;
+import java.util.HashSet;
 import java.util.Scanner;
+import java.util.Set;
 
 @Component
 public class ConsoleApp implements CommandLineRunner {
@@ -19,23 +21,31 @@ public class ConsoleApp implements CommandLineRunner {
     private final ReservationService reservationService;
     private final TransactionService transactionService;
 
+    private final AuteurRepository auteurRepository;
+    private final EditeurRepository editeurRepository;
+    private final CategorieRepository categorieRepository;
+    private final EmployeRepository employeRepository;
+    private final ExemplaireRepository exemplaireRepository;
+
     private final VueCatalogueRepository vueCatalogueRepository;
     private final VueHistoriqueMembreRepository vueHistoriqueMembreRepository;
     private final VueEmpruntsEnCoursRepository vueEmpruntsEnCoursRepository;
     private final VueRetardsRepository vueRetardsRepository;
-    private final EditeurRepository editeurRepository;
-    private final CategorieRepository categorieRepository;
     private final VueReservationsActivesRepository vueReservationsActivesRepository;
     private final VuePenalitesRepository vuePenalitesRepository;
     private final VueLogAdminRepository vueLogAdminRepository;
     private final VueEmployesRepository vueEmployesRepository;
-    private final ExemplaireRepository exemplaireRepository;
 
     public ConsoleApp(
             LivreService livreService,
             MembreService membreService,
             ReservationService reservationService,
             TransactionService transactionService,
+            AuteurRepository auteurRepository,
+            EditeurRepository editeurRepository,
+            CategorieRepository categorieRepository,
+            EmployeRepository employeRepository,
+            ExemplaireRepository exemplaireRepository,
             VueCatalogueRepository vueCatalogueRepository,
             VueHistoriqueMembreRepository vueHistoriqueMembreRepository,
             VueEmpruntsEnCoursRepository vueEmpruntsEnCoursRepository,
@@ -43,14 +53,18 @@ public class ConsoleApp implements CommandLineRunner {
             VueReservationsActivesRepository vueReservationsActivesRepository,
             VuePenalitesRepository vuePenalitesRepository,
             VueLogAdminRepository vueLogAdminRepository,
-            VueEmployesRepository vueEmployesRepository,
-            EditeurRepository editeurRepository,
-            CategorieRepository categorieRepository,
-            ExemplaireRepository exemplaireRepository) {
+            VueEmployesRepository vueEmployesRepository) {
         this.livreService = livreService;
         this.membreService = membreService;
         this.reservationService = reservationService;
         this.transactionService = transactionService;
+
+        this.auteurRepository = auteurRepository;
+        this.editeurRepository = editeurRepository;
+        this.categorieRepository = categorieRepository;
+        this.employeRepository = employeRepository;
+        this.exemplaireRepository = exemplaireRepository;
+
         this.vueCatalogueRepository = vueCatalogueRepository;
         this.vueHistoriqueMembreRepository = vueHistoriqueMembreRepository;
         this.vueEmpruntsEnCoursRepository = vueEmpruntsEnCoursRepository;
@@ -59,77 +73,119 @@ public class ConsoleApp implements CommandLineRunner {
         this.vuePenalitesRepository = vuePenalitesRepository;
         this.vueLogAdminRepository = vueLogAdminRepository;
         this.vueEmployesRepository = vueEmployesRepository;
-        this.editeurRepository = editeurRepository;
-        this.categorieRepository = categorieRepository;
-        this.exemplaireRepository = exemplaireRepository;
     }
 
     @Override
     public void run(String... args) {
-        // seedData(); // initilisation de données de test au besoin
+        seedData();
         menuPrincipal();
     }
 
     private void seedData() {
-
         System.out.println("\n--- Initialisation des données démo ---");
 
         try {
-            Categorie cat;
-
             if (categorieRepository.count() == 0) {
-                cat = new Categorie();
-                cat.setId(1L);
-                cat.setNom("Informatique");
-                cat.setDescription("Livres techniques");
-                categorieRepository.save(cat);
-            } else {
-                cat = categorieRepository.findAll().get(0);
-            }
+                Categorie c1 = new Categorie();
+                c1.setNom("Informatique");
+                c1.setDescription("Programmation et architecture");
 
-            Editeur ed;
+                Categorie c2 = new Categorie();
+                c2.setNom("Base de données");
+                c2.setDescription("SQL, Oracle et modélisation");
+
+                Categorie c3 = new Categorie();
+                c3.setNom("Roman");
+                c3.setDescription("Romans et littérature");
+
+                categorieRepository.save(c1);
+                categorieRepository.save(c2);
+                categorieRepository.save(c3);
+            }
 
             if (editeurRepository.count() == 0) {
-                ed = new Editeur();
-                ed.setId(1L);
-                ed.setNom("Pearson");
-                ed.setAdresse("Montreal");
-                ed.setCourriel("pearson@test.com");
-                ed.setNumTel("5141111111");
-                editeurRepository.save(ed);
-            } else {
-                ed = editeurRepository.findAll().get(0);
+                Editeur e1 = new Editeur();
+                e1.setNom("Pearson");
+                e1.setAdresse("Montréal");
+                e1.setCourriel("pearson@test.com");
+                e1.setNumTel("5141111111");
+
+                Editeur e2 = new Editeur();
+                e2.setNom("OReilly");
+                e2.setAdresse("Toronto");
+                e2.setCourriel("oreilly@test.com");
+                e2.setNumTel("5142222222");
+
+                editeurRepository.save(e1);
+                editeurRepository.save(e2);
             }
 
-            if (livreService.findByIsbn("9780134685991").isEmpty()) {
-                Livre livre = new Livre();
-                livre.setIsbn("9780134685991");
-                livre.setTitre("Effective Java");
-                livre.setAnnee(2018);
-                livre.setCategorie(cat);
-                livre.setEditeur(ed);
+            if (auteurRepository.count() == 0) {
+                Auteur a1 = new Auteur();
+                a1.setNom("Bloch");
+                a1.setPrenom("Joshua");
+                a1.setBiographie("Auteur de Effective Java");
 
-                livreService.save(livre);
+                Auteur a2 = new Auteur();
+                a2.setNom("Walls");
+                a2.setPrenom("Craig");
+                a2.setBiographie("Auteur Spring");
+
+                Auteur a3 = new Auteur();
+                a3.setNom("Herbert");
+                a3.setPrenom("Frank");
+                a3.setBiographie("Auteur de Dune");
+
+                auteurRepository.save(a1);
+                auteurRepository.save(a2);
+                auteurRepository.save(a3);
             }
 
-            if (exemplaireRepository.count() == 0) {
-                Exemplaire ex = new Exemplaire();
-                ex.setId(1L);
-                // ex.setEtat("Disponible");
-                ex.setLivre(livreService.findByIsbn("9780134685991").get());
+            if (employeRepository.count() == 0) {
+                Employe emp = new Employe();
+                emp.setNom("Admin");
+                emp.setPrenom("Systeme");
+                emp.setAdresse("Bibliothèque");
+                emp.setNumTel("8190000000");
+                emp.setType(Employe.TypeEmploye.ADMIN);
 
-                exemplaireRepository.save(ex);
+                employeRepository.save(emp);
             }
 
             if (membreService.findAll().isEmpty()) {
-                Membre membre = new Membre();
-                membre.setNom("Lafleur");
-                membre.setPrenom("Olivier");
-                membre.setPassword("test123");
-                membre.setStatutCompte(Membre.StatutCompte.Actif);
+                Membre m = new Membre();
+                m.setNom("Lafleur");
+                m.setPrenom("Olivier");
+                m.setAdresse("Trois-Rivières");
+                m.setNumTel("8191234567");
+                m.setPassword("test123");
+                m.setStatutCompte(Membre.StatutCompte.Actif);
 
-                membreService.save(membre);
+                membreService.save(m);
             }
+
+            Categorie catInfo = categorieRepository.findAll().get(0);
+            Categorie catBD = categorieRepository.findAll().size() > 1 ? categorieRepository.findAll().get(1) : catInfo;
+            Categorie catRoman = categorieRepository.findAll().size() > 2 ? categorieRepository.findAll().get(2)
+                    : catInfo;
+
+            Editeur edPearson = editeurRepository.findAll().get(0);
+            Editeur edOReilly = editeurRepository.findAll().size() > 1 ? editeurRepository.findAll().get(1) : edPearson;
+
+            Auteur auteur1 = auteurRepository.findAll().get(0);
+            Auteur auteur2 = auteurRepository.findAll().size() > 1 ? auteurRepository.findAll().get(1) : auteur1;
+            Auteur auteur3 = auteurRepository.findAll().size() > 2 ? auteurRepository.findAll().get(2) : auteur1;
+
+            creerLivreSiAbsent("9780134685991", "Effective Java", 2018, catInfo, edPearson, auteur1);
+            creerLivreSiAbsent("9781492072508", "Spring Boot en pratique", 2021, catInfo, edOReilly, auteur2);
+            creerLivreSiAbsent("9780321436782", "Database System Concepts", 2020, catBD, edPearson, auteur1);
+            creerLivreSiAbsent("9780553382563", "Dune", 2015, catRoman, edOReilly, auteur3);
+
+            creerExemplaireSiAbsent("9780134685991");
+            creerExemplaireSiAbsent("9780134685991");
+            creerExemplaireSiAbsent("9781492072508");
+            creerExemplaireSiAbsent("9780321436782");
+            creerExemplaireSiAbsent("9780553382563");
 
             System.out.println("Seed créé avec succès.");
 
@@ -138,10 +194,43 @@ public class ConsoleApp implements CommandLineRunner {
         }
     }
 
+    private void creerLivreSiAbsent(String isbn, String titre, Integer annee, Categorie categorie, Editeur editeur,
+            Auteur auteur) {
+        if (livreService.findByIsbn(isbn).isPresent()) {
+            return;
+        }
+
+        Livre livre = new Livre();
+        livre.setIsbn(isbn);
+        livre.setTitre(titre);
+        livre.setAnnee(annee);
+        livre.setCategorie(categorie);
+        livre.setEditeur(editeur);
+
+        Set<Auteur> auteurs = new HashSet<>();
+        auteurs.add(auteur);
+        livre.setAuteurs(auteurs);
+
+        livreService.save(livre);
+    }
+
+    private void creerExemplaireSiAbsent(String isbn) {
+        Livre livre = livreService.findByIsbn(isbn).orElse(null);
+
+        if (livre == null) {
+            return;
+        }
+
+        Exemplaire ex = new Exemplaire();
+        ex.setLivre(livre);
+        ex.setDateAcquisition(LocalDate.now());
+        ex.setEtat(Exemplaire.EtatExemplaire.Disponible);
+
+        exemplaireRepository.save(ex);
+    }
+
     private void menuPrincipal() {
-
         while (true) {
-
             System.out.println("\n===== MENU PRINCIPAL =====");
             System.out.println("1. Membre");
             System.out.println("2. Employé");
@@ -152,25 +241,14 @@ public class ConsoleApp implements CommandLineRunner {
             int choix = lireInt();
 
             switch (choix) {
-
-                case 1:
-                    menuMembre();
-                    break;
-
-                case 2:
-                    menuEmploye();
-                    break;
-
-                case 3:
-                    menuAdmin();
-                    break;
-
-                case 0:
+                case 1 -> menuMembre();
+                case 2 -> menuEmploye();
+                case 3 -> menuAdmin();
+                case 0 -> {
                     System.out.println("Fin de l'application.");
                     return;
-
-                default:
-                    System.out.println("Choix invalide.");
+                }
+                default -> System.out.println("Choix invalide.");
             }
         }
     }
@@ -209,6 +287,7 @@ public class ConsoleApp implements CommandLineRunner {
             System.out.println("4. Valider un retour");
             System.out.println("5. Gérer les pénalités");
             System.out.println("6. Consulter historique réservations");
+            System.out.println("7. Initialiser données démo");
             System.out.println("0. Retour");
             System.out.print("Choix : ");
 
@@ -221,6 +300,7 @@ public class ConsoleApp implements CommandLineRunner {
                 case 4 -> validerRetour();
                 case 5 -> gererPenalites();
                 case 6 -> consulterHistoriqueReservations();
+                case 7 -> seedData();
                 case 0 -> {
                     return;
                 }
@@ -264,9 +344,23 @@ public class ConsoleApp implements CommandLineRunner {
         System.out.print("ISBN du livre : ");
         String isbn = scanner.nextLine();
 
-        System.out.println("À compléter selon ton modèle Reservation.");
-        System.out.println(
-                "Logique attendue : récupérer Membre + Livre, créer Reservation, puis reservationService.save(reservation).");
+        var membre = membreService.findById(idMembre);
+        var livre = livreService.findByIsbn(isbn);
+
+        if (membre.isEmpty() || livre.isEmpty()) {
+            System.out.println("Membre ou livre introuvable.");
+            return;
+        }
+
+        Reservation reservation = new Reservation();
+        reservation.setMembre(membre.get());
+        reservation.setLivre(livre.get());
+        reservation.setDateDebut(LocalDate.now());
+        reservation.setDateFin(LocalDate.now().plusDays(7));
+        reservation.setEtat(Reservation.EtatReservation.Réservé);
+
+        reservationService.save(reservation);
+        System.out.println("Réservation créée.");
     }
 
     private void annulerReservation() {
@@ -362,9 +456,26 @@ public class ConsoleApp implements CommandLineRunner {
         System.out.print("ID exemplaire : ");
         Long idExemplaire = lireLong();
 
-        System.out.println("À compléter selon tes repositories/services Employe et Exemplaire.");
-        System.out.println("Logique attendue : créer TransactionEmprunt avec membre + employe + exemplaire.");
-        System.out.println("Ensuite transactionService.save(transaction).");
+        var membre = membreService.findById(idMembre);
+        var employe = employeRepository.findById(idEmploye);
+        var exemplaire = exemplaireRepository.findById(idExemplaire);
+
+        if (membre.isEmpty() || employe.isEmpty() || exemplaire.isEmpty()) {
+            System.out.println("Membre, employé ou exemplaire introuvable.");
+            return;
+        }
+
+        Transaction transaction = new Transaction();
+        transaction.setMembre(membre.get());
+        transaction.setEmploye(employe.get());
+        transaction.setExemplaire(exemplaire.get());
+        transaction.setDateDebut(LocalDate.now());
+        transaction.setDateRetourPrevu(LocalDate.now().plusDays(14));
+        transaction.setEtat(Transaction.EtatTransaction.EnCours);
+
+        transactionService.save(transaction);
+
+        System.out.println("Emprunt créé.");
     }
 
     private void validerRetour() {
@@ -403,8 +514,7 @@ public class ConsoleApp implements CommandLineRunner {
 
     private int lireInt() {
         try {
-            int value = Integer.parseInt(scanner.nextLine());
-            return value;
+            return Integer.parseInt(scanner.nextLine());
         } catch (NumberFormatException e) {
             return -1;
         }

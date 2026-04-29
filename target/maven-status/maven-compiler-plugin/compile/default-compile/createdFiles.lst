@@ -1,11 +1,9 @@
 com\example\library\model\Reservation$EtatReservation.class
 com\example\library\model\Membre$StatutCompte.class
-com\example\library\model\Payment.class
 com\example\library\model\Editeur.class
 com\example\library\service\LivreService.class
 com\example\library\model\Exemplaire$EtatExemplaire.class
 com\example\library\service\impl\MembreServiceImpl.class
-com\example\library\model\Payment$StatutPay.class
 com\example\library\repository\LogEntryRepository.class
 com\example\library\model\Employe.class
 com\example\library\repository\MembreRepository.class
@@ -16,8 +14,6 @@ com\example\library\model\Reservation.class
 com\example\library\ConsoleApp.class
 com\example\library\repository\PaymentRepository.class
 com\example\library\service\impl\ReservationServiceImpl.class
-com\example\library\service\TransactionEmpruntService.class
-com\example\library\model\LogEntry.class
 com\example\library\repository\ExemplaireRepository.class
 com\example\library\model\Categorie.class
 com\example\library\controller\LivreController.class
@@ -25,9 +21,6 @@ com\example\library\model\Membre.class
 com\example\library\repository\AuteurRepository.class
 com\example\library\repository\EditeurRepository.class
 com\example\library\model\Auteur.class
-com\example\library\service\impl\TransactionEmpruntServiceImpl.class
-com\example\library\model\TransactionEmprunt$EtatTransaction.class
-com\example\library\repository\TransactionEmpruntRepository.class
 com\example\library\exception\GlobalExceptionHandler.class
 com\example\library\controller\TransactionEmpruntController.class
 com\example\library\model\Exemplaire.class
@@ -38,7 +31,6 @@ com\example\library\LibraryApplication.class
 com\example\library\repository\CategorieRepository.class
 com\example\library\controller\MembreController.class
 com\example\library\service\MembreService.class
-com\example\library\model\TransactionEmprunt.class
 com\example\library\repository\ReservationRepository.class
 com\example\library\model\Employe$TypeEmploye.class
 com\example\library\model\Historique.class

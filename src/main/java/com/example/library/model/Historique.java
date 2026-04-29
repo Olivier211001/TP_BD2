@@ -1,9 +1,9 @@
 package com.example.library.model;
 
 import jakarta.persistence.*;
-import jakarta.transaction.Transaction;
 import lombok.Getter;
 import lombok.Setter;
+
 import java.math.BigDecimal;
 
 @Entity
@@ -19,15 +19,15 @@ public class Historique {
     private Long id;
 
     @ManyToOne
-    @JoinColumn(name = "ID_TRANS")
+    @JoinColumn(name = "ID_TRANS", nullable = false)
     private Transaction transaction;
 
     @ManyToOne
-    @JoinColumn(name = "ID_MEMBRE")
+    @JoinColumn(name = "ID_MEMBRE", nullable = false)
     private Membre membre;
 
     @ManyToOne
-    @JoinColumn(name = "ID_EMP")
+    @JoinColumn(name = "ID_EMP", nullable = false)
     private Employe employe;
 
     @ManyToOne
