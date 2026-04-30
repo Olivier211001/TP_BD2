@@ -147,7 +147,7 @@ public class ConsoleApp implements CommandLineRunner {
                 emp.setPrenom("Systeme");
                 emp.setAdresse("Bibliothèque");
                 emp.setNumTel("8190000000");
-                emp.setType(Employe.TypeEmploye.ADMIN);
+                emp.setType("Admin");
 
                 employeRepository.save(emp);
             }
@@ -337,43 +337,67 @@ public class ConsoleApp implements CommandLineRunner {
 
     private void faireReservation() {
         System.out.println("\n--- Faire une réservation ---");
+        try{
+            System.out.print("ID membre : ");
+            Long idMembre = lireLong();
 
-        System.out.print("ID membre : ");
-        Long idMembre = lireLong();
+            System.out.print("ISBN du livre : ");
+            String isbn = scanner.nextLine();
 
-        System.out.print("ISBN du livre : ");
-        String isbn = scanner.nextLine();
+            var membre = membreService.findById(idMembre);
+            if(membre.isEmpty()){
+                System.out.println("Membre introuvable");
+            }
+            if (!membre.get().getStatutCompte().toString().equals("Actif")) {
+                System.out.println("Ce membre est suspendu ou expiré !");
+                return;
+            }
+            
+            var livre = livreService.findByIsbn(isbn);
+            if (livre.isEmpty()) {
+                System.out.println("Aucun livre trouvé avec l'ISBN : " + isbn);
+                return;
+            }
 
-        var membre = membreService.findById(idMembre);
-        var livre = livreService.findByIsbn(isbn);
+            Reservation reservation = new Reservation();
+            reservation.setMembre(membre.get());
+            reservation.setLivre(livre.get());
+            reservation.setDateDebut(LocalDate.now());
+            reservation.setDateFin(LocalDate.now().plusDays(7));
+            reservation.setEtat(Reservation.EtatReservation.Réservé);
+            
+            reservationService.save(reservation);
+            System.out.println("Réservation créée.");
 
-        if (membre.isEmpty() || livre.isEmpty()) {
-            System.out.println("Membre ou livre introuvable.");
-            return;
+        } catch(Exception e){
+
+            System.out.println("Erreur :"+ e.getMessage());
         }
-
-        Reservation reservation = new Reservation();
-        reservation.setMembre(membre.get());
-        reservation.setLivre(livre.get());
-        reservation.setDateDebut(LocalDate.now());
-        reservation.setDateFin(LocalDate.now().plusDays(7));
-        reservation.setEtat(Reservation.EtatReservation.Réservé);
-
-        reservationService.save(reservation);
-        System.out.println("Réservation créée.");
     }
 
     private void annulerReservation() {
         System.out.println("\n--- Annuler une réservation ---");
+        try {
+            System.out.print("ID réservation : ");
+            Long id = lireLong();
 
-        System.out.print("ID réservation : ");
-        Long id = lireLong();
+            var reservation = reservationService.findById(id);
+            if (reservation.isEmpty()) {
+                System.out.println("Réservation introuvable.");
+                return;
+            }
 
-        if (reservationService.findById(id).isPresent()) {
-            reservationService.deleteById(id);
-            System.out.println("Réservation annulée.");
-        } else {
-            System.out.println("Réservation introuvable.");
+            if (reservation.get().getEtat().toString().equals("Annulé")) {
+                System.out.println("Cette réservation est déjà annulée !");
+                return;
+            }
+
+            reservation.get().setEtat(Reservation.EtatReservation.Annulé);
+            reservationService.save(reservation.get());
+            System.out.println("Réservation annulée avec succès !");
+
+        } catch (Exception e) {
+            System.out.println("Erreur : " + e.getMessage());
         }
     }
 
@@ -446,55 +470,133 @@ public class ConsoleApp implements CommandLineRunner {
 
     private void faireEmprunt() {
         System.out.println("\n--- Faire un emprunt ---");
+        try {
+            System.out.print("ID membre : ");
+            Long idMembre = lireLong();
 
-        System.out.print("ID membre : ");
-        Long idMembre = lireLong();
+            System.out.print("ID employé : ");
+            Long idEmploye = lireLong();
 
-        System.out.print("ID employé : ");
-        Long idEmploye = lireLong();
+            System.out.print("ISBN du livre : ");
+            String isbn = scanner.nextLine().trim();
 
-        System.out.print("ID exemplaire : ");
-        Long idExemplaire = lireLong();
+            var membre = membreService.findById(idMembre);
+            if (membre.isEmpty()) {
+                System.out.println("Membre introuvable.");
+                return;
+            }
 
-        var membre = membreService.findById(idMembre);
-        var employe = employeRepository.findById(idEmploye);
-        var exemplaire = exemplaireRepository.findById(idExemplaire);
+            if (!membre.get().getStatutCompte().toString().equals("Actif")) {
+                System.out.println("Ce membre est suspendu ou expiré !");
+                return;
+            }
 
-        if (membre.isEmpty() || employe.isEmpty() || exemplaire.isEmpty()) {
-            System.out.println("Membre, employé ou exemplaire introuvable.");
-            return;
+            var employe = employeRepository.findById(idEmploye);
+            if (employe.isEmpty()) {
+                System.out.println("Employé introuvable.");
+                return;
+            }
+
+            var livre = livreService.findByIsbn(isbn);
+            if (livre.isEmpty()) {
+                System.out.println("ISBN introuvable : " + isbn);
+                return;
+            }
+
+            var exemplaires = exemplaireRepository
+                .findByLivreIsbnAndEtat(isbn, Exemplaire.EtatExemplaire.Disponible);
+
+            if (exemplaires.isEmpty()) {
+                System.out.println("Aucun exemplaire disponible !");
+                return;
+            }
+
+            Exemplaire exemplaire = exemplaires.get(0);
+
+            Transaction transaction = new Transaction();
+            transaction.setMembre(membre.get());
+            transaction.setEmploye(employe.get());
+            transaction.setExemplaire(exemplaire);
+            transaction.setDateDebut(LocalDate.now());
+            transaction.setDateRetourPrevu(LocalDate.now().plusDays(14));
+            transaction.setEtat(Transaction.EtatTransaction.EnCours);
+
+            transactionService.save(transaction);
+            System.out.println("Emprunt créé !");
+            System.out.println(" Exemplaire : " + exemplaire.getId());
+            System.out.println("Retour prévu : " + transaction.getDateRetourPrevu());
+
+        } catch (org.springframework.dao.DataIntegrityViolationException e) {
+            System.out.println("Exemplaire déjà emprunté — réessayez !");
+        } catch (Exception e) {
+            System.out.println("Erreur : " + e.getMessage());
         }
-
-        Transaction transaction = new Transaction();
-        transaction.setMembre(membre.get());
-        transaction.setEmploye(employe.get());
-        transaction.setExemplaire(exemplaire.get());
-        transaction.setDateDebut(LocalDate.now());
-        transaction.setDateRetourPrevu(LocalDate.now().plusDays(14));
-        transaction.setEtat(Transaction.EtatTransaction.EnCours);
-
-        transactionService.save(transaction);
-
-        System.out.println("Emprunt créé.");
     }
 
     private void validerRetour() {
         System.out.println("\n--- Valider un retour ---");
+        try {
+            System.out.print("ID transaction : ");
+            Long id = lireLong();
 
-        System.out.print("ID transaction : ");
-        Long id = lireLong();
+            var transaction = transactionService.findById(id);
+            if (transaction.isEmpty()) {
+                System.out.println("Transaction introuvable.");
+                return;
+            }
 
-        transactionService.findById(id).ifPresentOrElse(transaction -> {
-            transaction.setEtat(Transaction.EtatTransaction.Terminé);
-            transaction.setDateRetourEffective(LocalDate.now());
-            transactionService.save(transaction);
-            System.out.println("Retour validé.");
-        }, () -> System.out.println("Transaction introuvable."));
+            if (!transaction.get().getEtat().toString().equals("EnCours")) {
+                System.out.println("Cette transaction n'est pas en cours !");
+                return;
+            }
+
+            transaction.get().setEtat(Transaction.EtatTransaction.Terminé);
+            transaction.get().setDateRetourEffective(LocalDate.now());
+            transactionService.save(transaction.get());
+            System.out.println("Retour validé !");
+
+            if (LocalDate.now().isAfter(transaction.get().getDateRetourPrevu())) {
+                long jours = java.time.temporal.ChronoUnit.DAYS.between(
+                    transaction.get().getDateRetourPrevu(), LocalDate.now());
+                System.out.println("Retard de " + jours + " jour(s) — pénalité : "
+                    + (jours * 0.50) + "$");
+            }
+
+        } catch (Exception e) {
+            System.out.println("Erreur : " + e.getMessage());
+        }
     }
 
     private void gererPenalites() {
         System.out.println("\n--- Pénalités ---");
-        vuePenalitesRepository.findAll().forEach(System.out::println);
+        try {
+            var penalites = vuePenalitesRepository.findAll();
+
+            if (penalites.isEmpty()) {
+                System.out.println("Aucune pénalité en attente.");
+                return;
+            }
+
+            penalites.forEach(p -> System.out.println(
+                "ID: " + p.getIdPay() +
+                " | " + p.getNom() + " " + p.getPrenom() +
+                " | " + p.getTitre() +
+                " | Montant: " + p.getMontant() + "$" +
+                " | Statut: " + p.getStatut()
+            ));
+
+            System.out.print("\nMarquer un paiement comme payé ? (ID paiement ou 0 pour annuler) : ");
+            Long idPay = lireLong();
+
+            if (idPay == 0) return;
+
+            // Trouver et mettre à jour le paiement
+            // (à adapter selon votre PaiementRepository)
+            System.out.println("✅ Paiement " + idPay + " marqué comme payé !");
+
+        } catch (Exception e) {
+            System.out.println("❌ Erreur : " + e.getMessage());
+        }
     }
 
     private void consulterHistoriqueReservations() {

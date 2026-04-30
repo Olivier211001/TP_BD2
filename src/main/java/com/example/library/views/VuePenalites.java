@@ -1,12 +1,15 @@
 package com.example.library.views;
 
 import jakarta.persistence.*;
+import lombok.Getter;
+
 import org.hibernate.annotations.Immutable;
 import java.time.LocalDate;
 
 @Entity
 @Immutable
 @Table(name = "VUE_PENALITES")
+@Getter
 public class VuePenalites {
 
     @Id

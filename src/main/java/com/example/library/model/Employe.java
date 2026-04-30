@@ -28,12 +28,8 @@ public class Employe {
     @Column(name = "NUM_TEL", length = 20)
     private String numTel;
 
-    @Enumerated(EnumType.STRING)
+    
     @Column(name = "TYPE", nullable = false, length = 20)
-    private TypeEmploye type;
+    private String type;
 
-    public enum TypeEmploye {
-        ADMIN,
-        BIBLIOTHECAIRE
-    }
 }

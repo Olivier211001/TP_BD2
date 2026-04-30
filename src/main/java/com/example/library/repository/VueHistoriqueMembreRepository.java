@@ -9,5 +9,6 @@ import org.springframework.data.jpa.repository.JpaRepository;
 public interface VueHistoriqueMembreRepository
         extends JpaRepository<VueHistoriqueMembre, Long> {
 
-    List<VueHistoriqueMembre> findByNomContainingIgnoreCase(String nom);
-}
+            List<VueHistoriqueMembre> findByIdMembre(Long idMembre);
+            List<VueHistoriqueMembre> findByNomContainingIgnoreCase(String nom);
+            List<VueHistoriqueMembre> findByEtatEmprunt(String etat);}
