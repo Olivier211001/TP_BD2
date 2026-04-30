@@ -352,6 +352,12 @@ public class ConsoleApp implements CommandLineRunner {
             return;
         }
 
+        if (membre.get().getStatutCompte() == Membre.StatutCompte.Inactif
+                || membre.get().getStatutCompte() == Membre.StatutCompte.Suspendu) {
+            System.out.println("Ce client a un compte inactif ou suspendu. Il ne peut pas faire de réservation.");
+            return;
+        }
+
         Reservation reservation = new Reservation();
         reservation.setMembre(membre.get());
         reservation.setLivre(livre.get());
@@ -365,6 +371,15 @@ public class ConsoleApp implements CommandLineRunner {
 
     private void annulerReservation() {
         System.out.println("\n--- Annuler une réservation ---");
+
+        System.out.print("ID membre : ");
+        Long idMembre = lireLong();
+        var membre = membreService.findById(idMembre);
+        if (membre.get().getStatutCompte() == Membre.StatutCompte.Inactif
+                || membre.get().getStatutCompte() == Membre.StatutCompte.Suspendu) {
+            System.out.println("Ce client a un compte expiré. Il ne peut pas annuler une réservation.");
+            return;
+        }
 
         System.out.print("ID réservation : ");
         Long id = lireLong();
