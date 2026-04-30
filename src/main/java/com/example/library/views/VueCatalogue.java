@@ -38,13 +38,19 @@ public class VueCatalogue {
 
     @Override
     public String toString() {
-        return "ISBN: " + isbn +
-                " | Titre: " + titre +
-                " | Année: " + annee +
-                " | Auteur: " + auteurPrenom + " " + auteurNom +
-                " | Éditeur: " + editeur +
-                " | Catégorie: " + categorie +
-                " | Exemplaires: " + nbExemplaires +
-                " | Disponibles: " + nbDisponibles;
+        return "\n========================================\n" +
+                "LIVRE\n" +
+                "----------------------------------------\n" +
+                "ISBN         : " + isbn + "\n" +
+                "Titre        : " + titre + "\n" +
+                "Année        : " + annee + "\n" +
+                "Auteur       : " + auteurPrenom + " " + auteurNom + "\n" +
+                "Éditeur      : " + editeur + "\n" +
+                "Catégorie    : " + categorie + "\n" +
+                "----------------------------------------\n" +
+                "En Stock\n" +
+                "Total        : " + nbExemplaires + "\n" +
+                "Disponibles  : " + nbDisponibles + "\n" +
+                "========================================";
     }
 }
