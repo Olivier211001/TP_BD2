@@ -592,10 +592,10 @@ public class ConsoleApp implements CommandLineRunner {
 
             // Trouver et mettre à jour le paiement
             // (à adapter selon votre PaiementRepository)
-            System.out.println("✅ Paiement " + idPay + " marqué comme payé !");
+            System.out.println("Paiement " + idPay + " marqué comme payé !");
 
         } catch (Exception e) {
-            System.out.println("❌ Erreur : " + e.getMessage());
+            System.out.println("Erreur : " + e.getMessage());
         }
     }
 
