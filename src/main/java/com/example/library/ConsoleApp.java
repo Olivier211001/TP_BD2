@@ -370,24 +370,24 @@ public class ConsoleApp implements CommandLineRunner {
 
     private void annulerReservation() {
         System.out.println("\n--- Annuler une réservation ---");
+        try{
+            System.out.print("ID réservation : ");
+            Long id = lireLong();
 
-        System.out.print("ID réservation : ");
-        Long id = lireLong();
+                var reservation = reservationService.findById(id);
+                if (reservation.isEmpty()) {
+                    System.out.println("Réservation introuvable.");
+                    return;
+                }
 
-            var reservation = reservationService.findById(id);
-            if (reservation.isEmpty()) {
-                System.out.println("Réservation introuvable.");
-                return;
-            }
+                if (reservation.get().getEtat().toString().equals("Annulé")) {
+                    System.out.println("Cette réservation est déjà annulée !");
+                    return;
+                }
 
-            if (reservation.get().getEtat().toString().equals("Annulé")) {
-                System.out.println("Cette réservation est déjà annulée !");
-                return;
-            }
-
-            reservation.get().setEtat(Reservation.EtatReservation.Annulé);
-            reservationService.save(reservation.get());
-            System.out.println("Réservation annulée avec succès !");
+                reservation.get().setEtat(Reservation.EtatReservation.Annulé);
+                reservationService.save(reservation.get());
+                System.out.println("Réservation annulée avec succès !");
 
         } catch (Exception e) {
             System.out.println("Erreur : " + e.getMessage());
