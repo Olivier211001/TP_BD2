@@ -344,20 +344,13 @@ public class ConsoleApp implements CommandLineRunner {
             System.out.print("ISBN du livre : ");
             String isbn = scanner.nextLine();
 
-            var membre = membreService.findById(idMembre);
-            if(membre.isEmpty()){
-                System.out.println("Membre introuvable");
-            }
-            if (!membre.get().getStatutCompte().toString().equals("Actif")) {
-                System.out.println("Ce membre est suspendu ou expiré !");
-                return;
-            }
-            
-            var livre = livreService.findByIsbn(isbn);
-            if (livre.isEmpty()) {
-                System.out.println("Aucun livre trouvé avec l'ISBN : " + isbn);
-                return;
-            }
+        var membre = membreService.findById(idMembre);
+        var livre = livreService.findByIsbn(isbn);
+
+        if (membre.isEmpty() || livre.isEmpty()) {
+            System.out.println("Membre ou livre introuvable.");
+            return;
+        }
 
             Reservation reservation = new Reservation();
             reservation.setMembre(membre.get());
@@ -377,9 +370,9 @@ public class ConsoleApp implements CommandLineRunner {
 
     private void annulerReservation() {
         System.out.println("\n--- Annuler une réservation ---");
-        try {
-            System.out.print("ID réservation : ");
-            Long id = lireLong();
+
+        System.out.print("ID réservation : ");
+        Long id = lireLong();
 
             var reservation = reservationService.findById(id);
             if (reservation.isEmpty()) {
